@@ -17,6 +17,7 @@ fl <- s[3]
 #
 # data is a clean matrix where all of the elements are meaningful
 # for the statistical measurement
+# for this case it will be data[data["CENS"] == 1,] 
 #
 stat_descr <- function(data, file_to_save){
   #todo : improve the function to hava generic col name => synthax to search
