@@ -50,14 +50,14 @@ for(i in 1:length(s)){
 #makes the file to write an argument
 data <- read.table("../resources/ProjetR.txt", header=TRUE, sep="*", skip=1)
 
-#s <- split(x, x$PROV) NO NEED FOR SPLIT
+s <- split(x, x$PROV)
 # TODO : Ne pas oublier de gerer les valeurs manquantes
 for( name in names(s)){
   filtredData = data[data$PROV==name,]
   #3 function call for the 3 part of the report !
   stat_censure(data, paste(name, ".txt")
   stat_trt(data, paste(name, ".txt")
-  stat_desct(filtredData[filtredData["CENS"]==1,], paste(name, ".txt"))
+  stat_descr(filtredData[filtredData["CENS"]==1,], paste(name, ".txt"))
 }
 
 #
@@ -81,4 +81,11 @@ stat_descr <- function(data, file_to_save){
   rownames(data_to_write) <- c(names, "Ecart-type")
   colnames(data_to_write) <- c("T","AGE")
   write.table(data_to_write, file_to_save)
+}
+stat_censure <- function(data, file_to_save){
+
+
+}
+stat_trt(data, file_to_save){
+
 }
