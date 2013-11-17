@@ -18,9 +18,7 @@ stat_descr <- function(data, file_to_save){
   
   summary_T <- summary(as.vector(gsub("[,]",".", data$T), mode="numeric"), na.rm=TRUE)
   names <- names(summary_T)
-  #names(summary_T) <- NULL
   summary_AGE <- summary(as.vector(gsub("[,]",".", data$AGE), mode="numeric"), na.rm=TRUE)
-  #names(summary_AGE) <- NULL
   sd_T <- sd(data$T, na.rm=TRUE)
   sd_AGE <- sd(data$AGE, na.rm=TRUE)
 
