@@ -15,7 +15,7 @@ compute_freq <- function(vector, xlabels, ylabels){
 #
 stat_descr <- function(data, file_to_save){
   #todo : improve the function to hava generic col name  
-  T = gsub("[,]",".",data$T)
+  T = gsub("[,]",".", data$T)
   AGE = gsub("[,]",".", data$AGE)
   summary_T <- summary(as.vector(T, mode="numeric"), na.rm=TRUE)
   names <- names(summary_T)
@@ -66,32 +66,3 @@ for(i in 1:length(s)){
 
 }
 
-
-
-# # bw <- s[1]
-# # bxl <- s[2]
-# # fl <- s[3]
-
-# #TODO
-# #makes the file to read an argument
-# #makes the file to write an argument
-# data <- read.table("../resources/ProjetR.txt", header=TRUE, sep="*", skip=1)
-
-# s <- split(x, x$PROV)
-# # TODO : Ne pas oublier de gerer les valeurs manquantes
-# for( name in names(s)){
-#   filtredData = data[data$PROV==name,]
-#   #3 function call for the 3 part of the report !
-#   stat_censure(data, paste(name, ".txt")
-#   stat_trt(data, paste(name, ".txt")
-#   stat_descr(filtredData[filtredData["CENS"]==1,], paste(name, ".txt"))
-# }
-
-
-# stat_censure <- function(data, file_to_save){
-
-
-# }
-# stat_trt(data, file_to_save){
-
-# }
