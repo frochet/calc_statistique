@@ -15,12 +15,13 @@ compute_freq <- function(vector, xlabels, ylabels){
 #
 stat_descr <- function(data, file_to_save){
   #todo : improve the function to hava generic col name  
-  
-  summary_T <- summary(as.vector(gsub("[,]",".", data$T), mode="numeric"), na.rm=TRUE)
+  T = gsub("[,]",".",data$T)
+  AGE = gsub("[,]",".", data$AGE)
+  summary_T <- summary(as.vector(T, mode="numeric"), na.rm=TRUE)
   names <- names(summary_T)
-  summary_AGE <- summary(as.vector(gsub("[,]",".", data$AGE), mode="numeric"), na.rm=TRUE)
-  sd_T <- sd(data$T, na.rm=TRUE)
-  sd_AGE <- sd(data$AGE, na.rm=TRUE)
+  summary_AGE <- summary(as.vector(AGE, mode="numeric"), na.rm=TRUE)
+  sd_T <- sd(T, na.rm=TRUE)
+  sd_AGE <- sd(AGE, na.rm=TRUE)
 
   data_to_write <- matrix(c(summary_T, sd_T, summary_AGE[1:6], sd_AGE),
 			  nrow=7, ncol=2)
