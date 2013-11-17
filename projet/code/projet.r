@@ -14,20 +14,24 @@ compute_freq <- function(vector, xlabels, ylabels){
 # for this case it will be data[data["CENS"] == 1,] 
 #
 stat_descr <- function(data, file_to_save){
-  #todo : improve the function to hava generic col name => synthax to search
-  #over col names ? 
-  summary_T <- summary(data$T)
+  #todo : improve the function to hava generic col name  
+  
+  summary_T <- summary(as.vector(gsub("[,]",".", data$T), mode="numeric"), na.rm=TRUE)
   names <- names(summary_T)
-  names(summary_T) <- NULL
-  summary_AGE <- summary(data$AGE)
-  names(summary_AGE) <- NULL
-  sd_T <- sd(data$T)
-  sd_AGE <- sd(data$AGE)
+  #names(summary_T) <- NULL
+  summary_AGE <- summary(as.vector(gsub("[,]",".", data$AGE), mode="numeric"), na.rm=TRUE)
+  #names(summary_AGE) <- NULL
+  sd_T <- sd(data$T, na.rm=TRUE)
+  sd_AGE <- sd(data$AGE, na.rm=TRUE)
 
-  data_to_write <- matrix(c(summary_T, sd_T), c(summary_AGE, sd_AGE))
+  data_to_write <- matrix(c(summary_T, sd_T, summary_AGE[1:6], sd_AGE),
+			  nrow=7, ncol=2)
   rownames(data_to_write) <- c(names, "Ecart-type")
   colnames(data_to_write) <- c("T","AGE")
-  write.table(data_to_write, file_to_save)
+  sink(file=file_to_save, append=TRUE)
+  print(data_to_write)
+  sink()
+  #write.table(data_to_write, file_to_save, append=TRUE) #does shitty print
 }
 
 
