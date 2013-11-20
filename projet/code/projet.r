@@ -1,19 +1,33 @@
 
-compute_freq <- function(vector, file_to_save){
-  c <- vector
-  f <- table(c)
+compute_cens <- function(vector, file_to_save){
+  f <- table(vector)
 
-  data_to_write <- matrix(c(f[[1]], f[[1]]/length(c), f[[2]], f[[2]]/length(c)),
+  data_to_write <- matrix(c(f[[1]], f[[1]]/length(vector), f[[2]], f[[2]]/length(vector)),
     nrow=2, ncol=2) 
   rownames(data_to_write) <- c("Effectif", "Fréquence")
   colnames(data_to_write) <- c("Censuré","Non censuré")
 
   sink(file=file_to_save, append=TRUE)
-  print(data_to_write, digit=2)
+  print(data_to_write, digits=2)
   sink()
   # write.table(res, file=filename, sep="\t", row.names=FALSE, col.names=FALSE, append=TRUE)
 }
 
+
+compute_treat <- function(vector, file_to_save){
+  f <- table(vector)
+  n <- sum(is.na(vector))
+  l <- length(vector)
+  data_to_write <- matrix(c(f[[1]], f[[1]]/l, f[[2]], f[[2]]/l, n, n/l),
+    nrow=2, ncol=3) 
+  rownames(data_to_write) <- c("Effectif", "Fréquence")
+  colnames(data_to_write) <- c("Traitement A","Traitement B", "NA")
+
+  sink(file=file_to_save, append=TRUE)
+  print(data_to_write, digits=2)
+  sink()
+  # write.table(res, file=filename, sep="\t", row.names=FALSE, col.names=FALSE, append=TRUE)
+}
 #TODO compute treatment
 
 #
@@ -74,11 +88,11 @@ for(i in 1:length(s)){
   cat("_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _  \n\n", file=filename, append=TRUE)
   cat("Nombre de patient ayant subi l'événement versus les patients censurés : \n\n", file=filename, append=TRUE)
   #compute censure freq
-  compute_freq(p[[1]]$CENS, filename)
+  compute_cens(p[[1]]$CENS, filename)
 
   cat("\nNombre de patient ayant reçu le traitement A vs les patients ayant reçu le traitement B : \n\n", file=filename, append=TRUE)
   #compute treatment freq
-  #compute_freq(p[[1]]$TRT, filename)
+  compute_treat(p[[1]]$TRT, filename)
 
   cat("\nStatistiques descriptives pour les concernant les temps de rechute\nainsi que l'âge des patients ayant subi une rechute :\n\n", file=filename, append=TRUE)
   #compute desc stats
