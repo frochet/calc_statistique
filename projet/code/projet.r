@@ -36,9 +36,21 @@ stat_descr <- function(data, file_to_save){
   rownames(data_to_write) <- c(names, "Ecart-type")
   colnames(data_to_write) <- c("T","AGE")
   sink(file=file_to_save, append=TRUE)
-  print(data_to_write, digit=2)
+  print(data_to_write, digits=4)
   sink()
   #write.table(data_to_write, file_to_save, append=TRUE) #does shitty print
+}
+
+#
+# Fifth point of the Part A. Standardize a column. 
+# To use the function to standardize age, you have to give data$AGE to 
+# the parameter data of the function.
+#
+standardization <- function(data){
+  AGE <- as.vector(gsub("[,]", ".", data), mode="numeric")
+  sd_AGE <- sd(AGE, na.rm=TRUE)
+  mean_AGE <- mean(AGE, na.rm=TRUE)
+  return (na.omit((AGE - mean_AGE)/sd_AGE))
 }
 
 
@@ -71,6 +83,7 @@ for(i in 1:length(s)){
   cat("\nStatistiques descriptives pour les concernant les temps de rechute\nainsi que l'âge des patients ayant subi une rechute :\n\n", file=filename, append=TRUE)
   #compute desc stats
   stat_descr(p[[1]][p[[1]]["CENS"]==1,], filename)
+
 
 }
 
