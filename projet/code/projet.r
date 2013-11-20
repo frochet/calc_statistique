@@ -1,12 +1,20 @@
 
-compute_freq <- function(vector, xlabels, ylabels){
+compute_freq <- function(vector, file_to_save){
   c <- vector
   f <- table(c)
 
-  res = matrix(c(f[[1]], f[[2]], f[[1]]/length(c), f[[2]]/length(c)),
+  data_to_write <- matrix(c(f[[1]], f[[1]]/length(c), f[[2]], f[[2]]/length(c)),
     nrow=2, ncol=2) 
-  write.table(res, file=filename, sep="\t", row.names=FALSE, col.names=FALSE, append=TRUE)
+  rownames(data_to_write) <- c("Effectif", "Fréquence")
+  colnames(data_to_write) <- c("Censuré","Non censuré")
+
+  sink(file=file_to_save, append=TRUE)
+  print(data_to_write, digit=2)
+  sink()
+  # write.table(res, file=filename, sep="\t", row.names=FALSE, col.names=FALSE, append=TRUE)
 }
+
+#TODO compute treatment
 
 #
 # data is a clean matrix where all of the elements are meaningful
@@ -28,7 +36,7 @@ stat_descr <- function(data, file_to_save){
   rownames(data_to_write) <- c(names, "Ecart-type")
   colnames(data_to_write) <- c("T","AGE")
   sink(file=file_to_save, append=TRUE)
-  print(data_to_write)
+  print(data_to_write, digit=2)
   sink()
   #write.table(data_to_write, file_to_save, append=TRUE) #does shitty print
 }
@@ -48,17 +56,17 @@ for(i in 1:length(s)){
   filename <- paste(n, ".txt", sep="")
 
   file.create(filename)
-  fd<-file("output.txt")
+  #fd<-file("output.txt")
 
   cat("Statistiques descriptives pour le province  Brabant Wallon  : \n", file=filename, append=TRUE)
   cat("_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _  \n\n", file=filename, append=TRUE)
   cat("Nombre de patient ayant subi l'événement versus les patients censurés : \n\n", file=filename, append=TRUE)
   #compute censure freq
-  compute_freq(p[[1]]$CENS, 0, 0)
+  compute_freq(p[[1]]$CENS, filename)
 
   cat("\nNombre de patient ayant reçu le traitement A vs les patients ayant reçu le traitement B : \n\n", file=filename, append=TRUE)
   #compute treatment freq
-  compute_freq(p[[1]]$TRT, 0, 0)
+  #compute_freq(p[[1]]$TRT, filename)
 
   cat("\nStatistiques descriptives pour les concernant les temps de rechute\nainsi que l'âge des patients ayant subi une rechute :\n\n", file=filename, append=TRUE)
   #compute desc stats
