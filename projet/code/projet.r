@@ -1,4 +1,4 @@
-
+#TODO comment
 compute_cens <- function(vector, file_to_save){
   f <- table(vector)
 
@@ -10,10 +10,9 @@ compute_cens <- function(vector, file_to_save){
   sink(file=file_to_save, append=TRUE)
   print(data_to_write, digits=2)
   sink()
-  # write.table(res, file=filename, sep="\t", row.names=FALSE, col.names=FALSE, append=TRUE)
 }
 
-
+#TODO comment
 compute_treat <- function(vector, file_to_save){
   f <- table(vector)
   n <- sum(is.na(vector))
@@ -26,9 +25,7 @@ compute_treat <- function(vector, file_to_save){
   sink(file=file_to_save, append=TRUE)
   print(data_to_write, digits=2)
   sink()
-  # write.table(res, file=filename, sep="\t", row.names=FALSE, col.names=FALSE, append=TRUE)
 }
-#TODO compute treatment
 
 #
 # data is a clean matrix where all of the elements are meaningful
@@ -70,8 +67,8 @@ for(i in 1:length(s)){
   filename <- paste(n, ".txt", sep="")
 
   file.create(filename)
-  #fd<-file("output.txt")
 
+  #Part 1
   cat("Statistiques descriptives pour le province  Brabant Wallon  : \n", file=filename, append=TRUE)
   cat("_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _  \n\n", file=filename, append=TRUE)
   cat("Nombre de patient ayant subi l'événement versus les patients censurés : \n\n", file=filename, append=TRUE)
@@ -85,6 +82,25 @@ for(i in 1:length(s)){
   cat("\nStatistiques descriptives pour les concernant les temps de rechute\nainsi que l'âge des patients ayant subi une rechute :\n\n", file=filename, append=TRUE)
   #compute desc stats
   stat_descr(p[[1]][p[[1]]["CENS"]==1,], filename)
-
 }
 
+
+#Part 2
+  
+#TODO comment
+lambda <- read.table("../resources/lambda_Flandre.txt")
+age <- read.table("../resources/beta1_Flandre.txt")
+trt <- read.table("../resources/beta2_Flandre.txt")
+
+jpeg("Flandre_postérieur.jpeg", width = 640, height = 640, units = "px", quality = 90)
+par(mfrow = c(2,3))
+plot(lambda[,2], type = "l", ylab = "lambda", xlab = "nb iteration")
+plot(age[,2], type = "l", ylab = "AGE", xlab = "nb iteration")
+plot(trt[,2], type = "l", ylab = "TRT", xlab = "nb iteration")
+hist(lambda[,2], probability=TRUE, main = "", ylab = "Density", xlab = "lambda")
+lines(density(lambda[,2]), col="blue")
+hist(age[,2], probability=TRUE, main = "", ylab = "Density", xlab = "AGE")
+lines(density(age[,2]), col="blue")
+hist(trt[,2], probability=TRUE, main = "", ylab = "Density", xlab = "TRT")
+lines(density(trt[,2]), col="blue")
+op <- dev.off()
