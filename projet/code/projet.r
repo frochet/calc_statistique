@@ -146,6 +146,14 @@ plot_function <- function(lambda, beta1, beta2, zone, data){
 }
 
 #TODO comment
+#arg:
+# - T : the vector of observed times 
+# - delta : the vector of censor (same length as T)
+# - l : the median of the lambda vector
+# - beta : a vector (b1, b2) with bi = median(beta(i)
+# - X : a matrix with the standardized age if the patient in the first column 
+#       and the treatement in the second one. (nrow = length(T))
+#returns : the logarithm of the distribution
 post_dist_log <- function(T, delta, l, beta, X){
   stopifnot(length(T)==length(delta), length(T)==legnth(X[,1]))
   acc <- 0
