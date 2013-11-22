@@ -139,7 +139,15 @@ plot_function <- function(lambda, beta1, beta2, zone, data){
 
 #TODO comment
 post_dist_log <- function(T, delta, l, beta, X){
-  
+  stopifnot(length(T)==length(delta), length(T)==legnth(X[,1]))
+  acc <- 0
+  mX <- median(X[,1])
+  for(i in 1:length(T)){
+    x <- c(mX, X[i,2])
+    iter <- delta[i]*log(cox_h(l, x, beta)) + log(cox_S(l, T[i], x, beta))
+    acc <- acc + iter
+  }
+  return (acc+log(l))
 }
 
 ########
