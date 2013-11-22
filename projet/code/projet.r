@@ -59,6 +59,7 @@ stat_descr <- function(data, file_to_save){
   #write.table(data_to_write, file_to_save, append=TRUE) #does shitty print
 }
 
+#TODO comment
 compute_stats <- function(s){
   for(i in 1:length(s)){
     p <- s[i]
@@ -146,7 +147,15 @@ plot_function <- function(lambda, beta1, beta2, zone, data){
 
 #TODO comment
 post_dist_log <- function(T, delta, l, beta, X){
-  
+  stopifnot(length(T)==length(delta), length(T)==legnth(X[,1]))
+  acc <- 0
+  mX <- median(X[,1])
+  for(i in 1:length(T)){
+    x <- c(mX, X[i,2])
+    iter <- delta[i]*log(cox_h(l, x, beta)) + log(cox_S(l, T[i], x, beta))
+    acc <- acc + iter
+  }
+  return (acc+log(l))
 }
 
 ########
@@ -167,7 +176,7 @@ plot_graphs(lambda, beta1, beta2, "Flandre")
 #Part B.2
 plot_function(lambda, beta1, beta2, "Flandre", s[3][[1]])
 
-
+#Part C
 
 #Part C.2
 ##
