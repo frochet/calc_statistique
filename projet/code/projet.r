@@ -59,6 +59,7 @@ stat_descr <- function(data, file_to_save){
   #write.table(data_to_write, file_to_save, append=TRUE) #does shitty print
 }
 
+#TODO comment
 compute_stats <- function(s){
   for(i in 1:length(s)){
     p <- s[i]
@@ -175,5 +176,5 @@ plot_graphs(lambda, beta1, beta2, "Flandre")
 #Part B.2
 plot_function(lambda, beta1, beta2, "Flandre", s[3][[1]])
 
-
+#Part C
 
