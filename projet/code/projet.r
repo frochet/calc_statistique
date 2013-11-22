@@ -186,3 +186,32 @@ plot_function(lambda, beta1, beta2, "Flandre", s[3][[1]])
 
 #Part C
 
+#Part C.2
+##
+# M: Nombre d'iterations 
+# N: Nombre de paramètres
+# T: Le vecteur de temps observé
+# delta : indicateurs de censure
+# lamda_init : valeur initiale de lamda
+# beta_init : les valeurs initiales de (beta1, beta2)
+# X : une matrice dont la premiere colonne corespond a l'age standardise du
+# patient et dont la deuxieme colonne correspond au traitement recu
+# sd_vect : vecteur d'ecart type
+##
+metropolis <- function(M, N, T, delta, lamda_init, beta_init, X, sd_vect){
+  z = rnorm(1, 0, sd_vect[1])
+
+  for(i in 1:M){
+      a = metropolis_core(...)
+      b = metropolis_core(...)
+      c = metropolis_core()
+      d = metropolis_core()
+  }
+}
+##
+#lamda : parametre d'interet de l'algorithme metropolis
+#
+metropolis_core <-function(lamda, sd){
+  
+}
+
