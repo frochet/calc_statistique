@@ -123,18 +123,18 @@ op <- dev.off()
 t <- seq(from = 0, to = 7, by = 0.1)
 f <- s[3] #flandre 
 sample <- as.vector(gsub("[,]", ".", f[[1]]$T), mode="numeric")
-lamb <- median(sample)
-stage <- standardization(f[[1]]$AGE) 
-mage <- median(age[,2])
-mtrt <- median(trt[,2])
-beta <- c(mage, mtrt)
-x <- c(sd(f[[1]]$AGE, na.rm=TRUE), 0)  #median(stage) renvoie de la merde
+lamb <- median(sample)#+0.6
+stAge <- standardization(f[[1]]$AGE) 
+mAge <- median(age[,2])
+mTrt <- median(trt[,2])
+beta <- c(mAge, mTrt)
+x <- c(median(stAge), 0)  #median(stAge) renvoie de la merde ... sd(f[[1]]$AGE
 exponent <- x%*%beta
-S <- exp(-lamb*t)^exponent
+S <- exp(-lamb*t)^exp(exponent)
 plot(t, S, type = "l")
-x <- c(sd(f[[1]]$AGE, na.rm=TRUE), 1)  #median(stage) renvoie de la merde
+x <- c(median(stAge), 1)  #median(stAge) renvoie de la merde
 exponent <- x%*%beta
-S <- exp(-lamb*t)^exponent
+S <- exp(-lamb*t)^exp(exponent)
 lines(t, S, type = "l", col="red")
 
 
