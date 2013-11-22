@@ -65,7 +65,39 @@ standardization <- function(data){
 }
 
 
+plot_graphs <- function(lambda, beta1, beta2, zone){
+  jpeg(paste(n, "postérieur.jpeg", sep="_"), width = 640, height = 640, units = "px", quality = 90)
+  par(mfrow = c(2,3))
+  plot(lambda[,2], type = "l", ylab = "lambda", xlab = "nb iteration")
+  plot(beta1[,2], type = "l", ylab = "AGE", xlab = "nb iteration")
+  plot(beta2[,2], type = "l", ylab = "TRT", xlab = "nb iteration")
+  hist(lambda[,2], probability=TRUE, main = "", ylab = "Density", xlab = "lambda")
+  lines(density(lambda[,2]), col="blue")
+  hist(beta1[,2], probability=TRUE, main = "", ylab = "Density", xlab = "AGE")
+  lines(density(beta1[,2]), col="blue")
+  hist(beta2[,2], probability=TRUE, main = "", ylab = "Density", xlab = "TRT")
+  lines(density(beta2[,2]), col="blue")
+  op <- dev.off()
+}
 
+plot_function <- function(lambda, beta1, beta2, zone, data){
+  jpeg(paste(n, "survie.jpeg", sep="_"), width = 640, height = 640, units = "px", quality = 90)
+  t <- seq(from = 0, to = 7, by = 0.1)
+  lamb <- median(lambda[,2]) #should I use lambda ?
+  stAge <- standardization(data$AGE) 
+  mBeta1 <- median(beta1[,2])
+  mBeta2 <- median(beta2[,2])
+  beta <- c(mBeta1, mBeta2)
+  x <- c(median(stAge), 0)  #median(stAge) renvoie de la merde ... sd(f[[1]]$AGE
+  exponent <- x%*%beta
+  S <- exp(-lamb*t)^exp(exponent)
+  plot(t, S, type = "l", col="blue")
+  x <- c(median(stAge), 1)  #median(stAge) renvoie de la merde
+  exponent <- x%*%beta
+  S <- exp(-lamb*t)^exp(exponent)
+  lines(t, S, type = "l", lty = "longdash", col="red")
+  op <- dev.off()
+}
 
 data <- read.table("../resources/ProjetR.txt", header=TRUE, sep="*", skip=1)
 
@@ -101,42 +133,14 @@ for(i in 1:length(s)){
   
 #TODO comment
 lambda <- read.table("../resources/lambda_Flandre.txt")
-age <- read.table("../resources/beta1_Flandre.txt")
-trt <- read.table("../resources/beta2_Flandre.txt")
+beta1 <- read.table("../resources/beta1_Flandre.txt")
+beta2 <- read.table("../resources/beta2_Flandre.txt")
 
-jpeg("Flandre_postérieur.jpeg", width = 640, height = 640, units = "px", quality = 90)
-par(mfrow = c(2,3))
-plot(lambda[,2], type = "l", ylab = "lambda", xlab = "nb iteration")
-plot(age[,2], type = "l", ylab = "AGE", xlab = "nb iteration")
-plot(trt[,2], type = "l", ylab = "TRT", xlab = "nb iteration")
-hist(lambda[,2], probability=TRUE, main = "", ylab = "Density", xlab = "lambda")
-lines(density(lambda[,2]), col="blue")
-hist(age[,2], probability=TRUE, main = "", ylab = "Density", xlab = "AGE")
-lines(density(age[,2]), col="blue")
-hist(trt[,2], probability=TRUE, main = "", ylab = "Density", xlab = "TRT")
-lines(density(trt[,2]), col="blue")
-op <- dev.off()
-
+plot_graphs(lambda, beta1, beta2, "Flandre")
 
 #Part B.2
 
-t <- seq(from = 0, to = 7, by = 0.1)
-f <- s[3] #flandre 
-sample <- as.vector(gsub("[,]", ".", f[[1]]$T), mode="numeric")
-lamb <- median(sample)#+0.6
-stAge <- standardization(f[[1]]$AGE) 
-mAge <- median(age[,2])
-mTrt <- median(trt[,2])
-beta <- c(mAge, mTrt)
-x <- c(median(stAge), 0)  #median(stAge) renvoie de la merde ... sd(f[[1]]$AGE
-exponent <- x%*%beta
-S <- exp(-lamb*t)^exp(exponent)
-plot(t, S, type = "l")
-x <- c(median(stAge), 1)  #median(stAge) renvoie de la merde
-exponent <- x%*%beta
-S <- exp(-lamb*t)^exp(exponent)
-lines(t, S, type = "l", col="red")
+plot_function(lambda, beta1, beta2, "Flandre", s[3][[1]])
 
 
-# J'en ai marre de s'truc
 
