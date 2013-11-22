@@ -107,6 +107,16 @@ plot_graphs <- function(lambda, beta1, beta2, zone){
 }
 
 #TODO comment
+cox_S <- function(l, t, x, beta){
+  return (exp(-l*t)^exp(x%*%beta))
+}
+
+#TODO comment
+cox_h <- function(l, x, beta){
+  return (l*exp(x%*%beta))
+}
+
+#TODO comment
 plot_function <- function(lambda, beta1, beta2, zone, data){
   jpeg(paste(zone, "survie.jpeg", sep="_"), width = 640, height = 640, units = "px", quality = 90)
   t <- seq(from = 0, to = 7, by = 0.1)
@@ -119,14 +129,17 @@ plot_function <- function(lambda, beta1, beta2, zone, data){
   beta <- c(mBeta1, mBeta2)
   x0 <- c(median(stAge), 0) #stAge0
   x1 <- c(median(stAge), 1) #stAge1
-  exponent0 <- x0%*%beta
-  exponent1 <- x1%*%beta
-  S0 <- exp(-lamb*t)^exp(exponent0)
-  S1 <- exp(-lamb*t)^exp(exponent1)
+  S0 <- cox_S(lamb, t, x0, beta)
+  S1 <- cox_S(lamb, t, x1, beta)
   plot(t, S0, type = "l", col="blue", main="Fonctions de survie en fonctions des traitements", 
     xlab="time", ylab="Survie estimée")
   lines(t, S1, type = "l", lty = "longdash", col="red")
   op <- dev.off()
+}
+
+#TODO comment
+post_dist_log <- function(T, delta, l, beta, X){
+  
 }
 
 ########
