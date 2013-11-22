@@ -97,7 +97,7 @@ for(i in 1:length(s)){
 }
 
 
-#Part 2
+#Part B.1
   
 #TODO comment
 lambda <- read.table("../resources/lambda_Flandre.txt")
@@ -116,3 +116,27 @@ lines(density(age[,2]), col="blue")
 hist(trt[,2], probability=TRUE, main = "", ylab = "Density", xlab = "TRT")
 lines(density(trt[,2]), col="blue")
 op <- dev.off()
+
+
+#Part B.2
+
+t <- seq(from = 0, to = 7, by = 0.1)
+f <- s[3] #flandre 
+sample <- as.vector(gsub("[,]", ".", f[[1]]$T), mode="numeric")
+lamb <- median(sample)
+stage <- standardization(f[[1]]$AGE) 
+mage <- median(age[,2])
+mtrt <- median(trt[,2])
+beta <- c(mage, mtrt)
+x <- c(sd(f[[1]]$AGE, na.rm=TRUE), 0)  #median(stage) renvoie de la merde
+exponent <- x%*%beta
+S <- exp(-lamb*t)^exponent
+plot(t, S, type = "l")
+x <- c(sd(f[[1]]$AGE, na.rm=TRUE), 1)  #median(stage) renvoie de la merde
+exponent <- x%*%beta
+S <- exp(-lamb*t)^exponent
+lines(t, S, type = "l", col="red")
+
+
+# J'en ai marre de s'truc
+
