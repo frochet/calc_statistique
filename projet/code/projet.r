@@ -226,13 +226,16 @@ metropolis <- function(N, T, delta, X, sd_vect, M=10000, lambda_init=1, beta_ini
   beta2 <- beta_init[2]
 
   new_lambda <- c(lambda)
-  new_beta1
-  new_beta2
+  new_beta1 <- c(beta1)
+  new_beta2 <- c(beta2)
 
   for(i in 1:M){
-      lambda <- metropolis_core(T, lambda, delta, sd_vect[1], c(beta1, beta2), X)
-      beta1 <- metropolis_core(T, lamda, delta, sd_vect[2], c(beta1, beta2), X)
-      beta2 <- metropolis_core(T, lamda, delta, sd_vect[3], c(beta1, beta2), X)
+    lambda <- metropolis_core(T, lambda, delta, sd_vect[1], c(beta1, beta2), X)
+    beta1 <- metropolis_core(T, beta1, delta, sd_vect[2], c(beta1, beta2), X)
+    beta2 <- metropolis_core(T, beta2, delta, sd_vect[3], c(beta1, beta2), X)
+    new_lambda <- append(new_lambda, lambda)
+    new_beta1 <- append(new_beta1, beta1)
+    new_beta2 <- append(new_beta2, beta2)
   }
   accept_lambda <- taux_acceptation(lambda, lambda+rnorm(1, 0, sd_vect[1]), T,
 		 		   delta, c(beta1, beta2), X)
@@ -240,5 +243,5 @@ metropolis <- function(N, T, delta, X, sd_vect, M=10000, lambda_init=1, beta_ini
 				   delta, c(beta1, beta2), X)
   accept_beta2 <- taux_acceptation(beta2, beta2+rnorm(1, 0, sd_vect[3]), T,
 				   delta, c(beta1, beta2), X)
-  return c(lambda, accept_lambda, beta1, accept_beta1, beta2, accept_beta2)
+  return c(new_lambda, accept_lambda, new_beta1, accept_beta1, new_beta2, accept_beta2)
 }
