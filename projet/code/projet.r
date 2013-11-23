@@ -268,7 +268,7 @@ plot_function(lambda, beta1, beta2, "Flandre", s[3][[1]])
 
 #Part C
 
-d <- s[1][[1]]
+d <- na.omit(s[1][[1]])
 print(d)
 stAge <- standardization(d$AGE)
 print(stAge)
