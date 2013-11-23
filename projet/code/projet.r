@@ -186,6 +186,16 @@ plot_function(lambda, beta1, beta2, "Flandre", s[3][[1]])
 
 #Part C
 
+taux_accepatation <- function(lamda, omega, T, delta, beta, X ){
+  pi_omega <- post_dist_log(T, delta, omega, beta, X)
+  pi_lamda <- post_dist_log(T, delta, lamda, beta, X)
+  v = exp(pi_omega - pi_lamda)
+  if (v < 1)
+    return v
+  else
+    return 1
+}	
+
 #Part C.2
 ##
 # M: Nombre d'iterations 
@@ -199,19 +209,33 @@ plot_function(lambda, beta1, beta2, "Flandre", s[3][[1]])
 # sd_vect : vecteur d'ecart type
 ##
 metropolis <- function(M, N, T, delta, lamda_init, beta_init, X, sd_vect){
-  z = rnorm(1, 0, sd_vect[1])
+  lamda <- lamda_init
+  beta1 <- beta_init[1]
+  beta2 <- beta_init[2]
 
   for(i in 1:M){
-      a = metropolis_core(...)
-      b = metropolis_core(...)
-      c = metropolis_core()
-      d = metropolis_core()
+      lamda <- metropolis_core(T, lamda, delta, sd_vect[1], c(beta1, beta2), X)
+      beta1 <- metropolis_core(T, lamda, delta, sd_vect[2], c(beta1, beta2, X)
+      beta2 <- metropolis_core(T, lamda, delta, sd_vect[3], c(beta1, beta2), X)
   }
+  accept_lamda <- taux_acceptation(lamda, lamda+rnorm(1, 0, sd_vect[1]), T,
+		 		   delta, c(beta1, beta2), X)
+  accept_beta1 <- taux_acceptation(beta1, beta1+rnorm(1, 0, sd_vect[2]), T,
+				   delta, c(beta1, beta2), X)
+  accept_beta2 <- taux_acceptation(beta2, beta2+rnorm(1, 0, sd_vect[3]), T,
+				   delta, c(beta1, beta2), X)
+  return c(lamda, accept_lamda, beta1, accept_beta1, beta2, accept_beta2)
 }
 ##
 #lamda : parametre d'interet de l'algorithme metropolis
 #
-metropolis_core <-function(lamda, sd){
-  
+metropolis_core <-function(T, lamda, delta, sd_lamda, beta, X){
+  omega <- lamda + rnorm(1, 0, sd_lamda)
+  alpha <- taux_acceptation(lamda, omega, T, delta, beta, X)
+  U <-runif(1, 0, 1)
+  if(U < alpha)
+    return omega
+  else
+    return lamda
 }
 
