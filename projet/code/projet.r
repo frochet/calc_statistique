@@ -188,7 +188,6 @@ plot_function(lambda, beta1, beta2, "Flandre", s[3][[1]])
 #Part C.2
 ##
 taux_acceptation <- function(lamda, omega, T, delta, beta, X ){
->>>>>>> ea0cafce17443ae7f6fd3c93940d568587fa3333
   pi_omega <- post_dist_log(T, delta, omega, beta, X)
   pi_lamda <- post_dist_log(T, delta, lamda, beta, X)
   v = exp(pi_omega - pi_lamda)
