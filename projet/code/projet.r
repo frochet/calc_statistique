@@ -186,7 +186,7 @@ plot_function(lambda, beta1, beta2, "Flandre", s[3][[1]])
 
 #Part C
 
-taux_accepatation <- function(lamda, omega, T, delta, beta, X ){
+taux_acceptation <- function(lamda, omega, T, delta, beta, X ){
   pi_omega <- post_dist_log(T, delta, omega, beta, X)
   pi_lamda <- post_dist_log(T, delta, lamda, beta, X)
   v = exp(pi_omega - pi_lamda)
@@ -208,14 +208,14 @@ taux_accepatation <- function(lamda, omega, T, delta, beta, X ){
 # patient et dont la deuxieme colonne correspond au traitement recu
 # sd_vect : vecteur d'ecart type
 ##
-metropolis <- function(M, N, T, delta, lamda_init, beta_init, X, sd_vect){
+metropolis <- function(N, T, delta, X, sd_vect, M=10000, lamda_init=1, beta_init=c(0.4, -0.4)){
   lamda <- lamda_init
   beta1 <- beta_init[1]
   beta2 <- beta_init[2]
 
   for(i in 1:M){
       lamda <- metropolis_core(T, lamda, delta, sd_vect[1], c(beta1, beta2), X)
-      beta1 <- metropolis_core(T, lamda, delta, sd_vect[2], c(beta1, beta2, X)
+      beta1 <- metropolis_core(T, lamda, delta, sd_vect[2], c(beta1, beta2), X)
       beta2 <- metropolis_core(T, lamda, delta, sd_vect[3], c(beta1, beta2), X)
   }
   accept_lamda <- taux_acceptation(lamda, lamda+rnorm(1, 0, sd_vect[1]), T,
