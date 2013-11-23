@@ -187,26 +187,26 @@ plot_function(lambda, beta1, beta2, "Flandre", s[3][[1]])
 
 #Part C.2
 ##
-taux_acceptation <- function(lamda, omega, T, delta, beta, X ){
+taux_acceptation <- function(lambda, omega, T, delta, beta, X ){
   pi_omega <- post_dist_log(T, delta, omega, beta, X)
-  pi_lamda <- post_dist_log(T, delta, lamda, beta, X)
-  v = exp(pi_omega - pi_lamda)
+  pi_lambda <- post_dist_log(T, delta, lambda, beta, X)
+  v = exp(pi_omega - pi_lambda)
   if (v < 1)
     return v
   else
     return 1
 }
 
-#lamda : parametre d'interet de l'algorithme metropolis
+#lambda : parametre d'interet de l'algorithme metropolis
 #
-metropolis_core <-function(T, lamda, delta, sd_lamda, beta, X){
-  omega <- lamda + rnorm(1, 0, sd_lamda)
-  alpha <- taux_acceptation(lamda, omega, T, delta, beta, X)
+metropolis_core <-function(T, lambda, delta, sd_lambda, beta, X){
+  omega <- lambda + rnorm(1, 0, sd_lambda)
+  alpha <- taux_acceptation(lambda, omega, T, delta, beta, X)
   U <-runif(1, 0, 1)
   if(U < alpha)
     return omega
   else
-    return lamda
+    return lambda
 }
 
 ##
@@ -214,27 +214,31 @@ metropolis_core <-function(T, lamda, delta, sd_lamda, beta, X){
 # N: Nombre de paramètres
 # T: Le vecteur de temps observé
 # delta : indicateurs de censure
-# lamda_init : valeur initiale de lamda
+# lambda_init : valeur initiale de lambda
 # beta_init : les valeurs initiales de (beta1, beta2)
 # X : une matrice dont la premiere colonne corespond a l'age standardise du
 # patient et dont la deuxieme colonne correspond au traitement recu
 # sd_vect : vecteur d'ecart type
 ##
-metropolis <- function(N, T, delta, X, sd_vect, M=10000, lamda_init=1, beta_init=c(0.4, -0.4)){
-  lamda <- lamda_init
+metropolis <- function(N, T, delta, X, sd_vect, M=10000, lambda_init=1, beta_init=c(0.4, -0.4)){
+  lambda <- lambda_init
   beta1 <- beta_init[1]
   beta2 <- beta_init[2]
 
+  new_lambda <- c(lambda)
+  new_beta1
+  new_beta2
+
   for(i in 1:M){
-      lamda <- metropolis_core(T, lamda, delta, sd_vect[1], c(beta1, beta2), X)
+      lambda <- metropolis_core(T, lambda, delta, sd_vect[1], c(beta1, beta2), X)
       beta1 <- metropolis_core(T, lamda, delta, sd_vect[2], c(beta1, beta2), X)
       beta2 <- metropolis_core(T, lamda, delta, sd_vect[3], c(beta1, beta2), X)
   }
-  accept_lamda <- taux_acceptation(lamda, lamda+rnorm(1, 0, sd_vect[1]), T,
+  accept_lambda <- taux_acceptation(lambda, lambda+rnorm(1, 0, sd_vect[1]), T,
 		 		   delta, c(beta1, beta2), X)
   accept_beta1 <- taux_acceptation(beta1, beta1+rnorm(1, 0, sd_vect[2]), T,
 				   delta, c(beta1, beta2), X)
   accept_beta2 <- taux_acceptation(beta2, beta2+rnorm(1, 0, sd_vect[3]), T,
 				   delta, c(beta1, beta2), X)
-  return c(lamda, accept_lamda, beta1, accept_beta1, beta2, accept_beta2)
+  return c(lambda, accept_lambda, beta1, accept_beta1, beta2, accept_beta2)
 }
