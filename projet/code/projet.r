@@ -126,12 +126,18 @@ plot_graphs <- function(lambda, beta1, beta2, zone){
 
 #TODO comment
 cox_S <- function(l, t, x, beta){
+  #print(t)
   return (exp(-l*t)^exp(x%*%beta))
 }
 
 #TODO comment
 cox_h <- function(l, x, beta){
-  return (l*exp(x%*%beta))
+  
+  #print("cosh")
+  #print(l)
+  r <- l*exp(x%*%beta)
+  #print(r[1][1])
+  return (r[1][1])
 }
 
 #TODO comment
@@ -176,7 +182,10 @@ post_dist_log <- function(T, delta, l, beta, X){
   mX <- median(X[,1])
   for(i in 1:length(T)){
     x <- c(mX, X[i,2])
-    iter <- delta[i]*log(cox_h(l, x, beta)) + log(cox_S(l, T[i], x, beta))
+    s <- log(cox_S(l, T[i], x, beta))
+    h <- log(cox_h(l, x, beta))
+    #print(h)
+    iter <- delta[i]*h + s
     acc <- acc + iter
   }
   return (acc+log(l))
@@ -198,7 +207,8 @@ taux_acceptation <- function(lambda, omega, T, delta, beta, X ){
 #lambda : parametre d'interet de l'algorithme metropolis
 #
 metropolis_core <-function(T, lambda, delta, sd_lambda, beta, X){
-  omega <- lambda + rnorm(1, 0, sd_lambda)
+  omega <- lambda + rnorm(1, 0, sd_lambda/2)
+  print(omega)
   alpha <- taux_acceptation(lambda, omega, T, delta, beta, X)
   U <-runif(1, 0, 1)
   if(U < alpha)
@@ -230,11 +240,11 @@ metropolis <- function(N, T, delta, X, sd_vect=c(0.2, 0.19, 0.27), M=10000, lamb
 
   for(i in 1:M){
     lambda <- metropolis_core(T, lambda, delta, sd_vect[1], c(beta1, beta2), X)
-    beta1 <- metropolis_core(T, beta1, delta, sd_vect[2], c(beta1, beta2), X)
-    beta2 <- metropolis_core(T, beta2, delta, sd_vect[3], c(beta1, beta2), X)
-    vect_lambda <- append(new_lambda, lambda)
-    vect_beta1 <- append(new_beta1, beta1)
-    vect_beta2 <- append(new_beta2, beta2)
+    beta1 <- metropolis_core(T, lambda, delta, sd_vect[2], c(beta1, beta2), X)
+    beta2 <- metropolis_core(T, lambda, delta, sd_vect[3], c(beta1, beta2), X)
+    vect_lambda <- append(vect_lambda, lambda)
+    vect_beta1 <- append(vect_beta1, beta1)
+    vect_beta2 <- append(vect_beta2, beta2)
   }
   accept_lambda <- taux_acceptation(lambda, lambda+rnorm(1, 0, sd_vect[1]), T,
            delta, c(beta1, beta2), X)
@@ -272,9 +282,9 @@ plot_function(lambda, beta1, beta2, "Flandre", s[3][[1]])
 #d[d$TRT %in% c(0,1)]
 #d <- s[1][[1]]
 d <- na.omit(s[1][[1]])
+print(d)
 stAge <- standardization(d$AGE)
 trt <- d$TRT
 m <- matrix(append(stAge, trt), ncol=2)
-# print(m)
-
-bra <- metropolis(3, d$T, d$CENS, m)
+t <- as.vector(gsub("[,]", ".", d$T), mode="numeric")
+bra <- metropolis(3, t, d$CENS, m)
