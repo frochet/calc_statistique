@@ -268,9 +268,10 @@ plot_function(lambda, beta1, beta2, "Flandre", s[3][[1]])
 
 #Part C
 
+#d[d$TRT %in% c(0,1)]
 d <- s[1][[1]]
 print(d)
-stAge <- standardization(d$AGE)
+stAge <- standardization(d[d$TRT %in% c(0,1)]$AGE)
 print(stAge)
 print(d$TRT)
 #bra <- metropolis(3, d$T, d$CENS, )
