@@ -111,15 +111,15 @@ standardization <- function(data){
 plot_graphs <- function(lambda, beta1, beta2, zone){
   jpeg(paste(zone, "postérieur.jpeg", sep="_"), width = 640, height = 640, units = "px", quality = 90)
   par(mfrow = c(2,3), oma=c(0,0,2,0))
-  plot(lambda[,2], type = "l", ylab = "lambda", xlab = "nb iteration")
-  plot(beta1[,2], type = "l", ylab = "AGE", xlab = "nb iteration")
-  plot(beta2[,2], type = "l", ylab = "TRT", xlab = "nb iteration")
-  hist(lambda[,2], probability=TRUE, main = "", ylab = "Density", xlab = "lambda")
-  lines(density(lambda[,2]), col="blue")
-  hist(beta1[,2], probability=TRUE, main = "", ylab = "Density", xlab = "AGE")
-  lines(density(beta1[,2]), col="blue")
-  hist(beta2[,2], probability=TRUE, main = "", ylab = "Density", xlab = "TRT")
-  lines(density(beta2[,2]), col="blue")
+  plot(lambda, type = "l", ylab = "lambda", xlab = "nb iteration")
+  plot(beta1, type = "l", ylab = "AGE", xlab = "nb iteration")
+  plot(beta2, type = "l", ylab = "TRT", xlab = "nb iteration")
+  hist(lambda, probability=TRUE, main = "", ylab = "Density", xlab = "lambda")
+  lines(density(lambda), col="blue")
+  hist(beta1, probability=TRUE, main = "", ylab = "Density", xlab = "AGE")
+  lines(density(beta1), col="blue")
+  hist(beta2, probability=TRUE, main = "", ylab = "Density", xlab = "TRT")
+  lines(density(beta2), col="blue")
   title("Résumé des distributions postérieures", outer=TRUE)
   op <- dev.off()
 }
@@ -139,12 +139,12 @@ cox_h <- function(l, x, beta){
 plot_function <- function(lambda, beta1, beta2, zone, data){
   jpeg(paste(zone, "survie.jpeg", sep="_"), width = 640, height = 640, units = "px", quality = 90)
   t <- seq(from = 0, to = 7, by = 0.1)
-  lamb <- median(lambda[,2])
+  lamb <- median(lambda)
   stAge <- standardization(data$AGE) 
   stAge0 <- standardization(data[data$TRT==0,]$AGE) 
   stAge1 <- standardization(data[data$TRT==1,]$AGE) 
-  mBeta1 <- median(beta1[,2])
-  mBeta2 <- median(beta2[,2])
+  mBeta1 <- median(beta1)
+  mBeta2 <- median(beta2)
   beta <- c(mBeta1, mBeta2)
   x0 <- c(median(stAge), 0) #stAge0
   x1 <- c(median(stAge), 1) #stAge1
@@ -186,8 +186,17 @@ post_dist_log <- function(T, delta, l, beta, X){
 }
 
 #TODO comment
-taux_acceptation <- function(lambda, omega, T, delta, beta, X ){
-  pi_omega <- post_dist_log(T, delta, omega, beta, X)
+taux_acceptation <- function(lambda, omega, T, delta, beta, X, param){
+  if(param == 1){
+    l <- omega
+    b <- beta
+  }
+  else if(param == 2 || param == 3){
+    l <- lambda
+    b <- beta
+    b[param-1] <- omega
+  }
+  pi_omega <- post_dist_log(T, delta, l, b, X)
   pi_lambda <- post_dist_log(T, delta, lambda, beta, X)
   v <- exp(pi_omega - pi_lambda)
   if (v < 1)
@@ -198,16 +207,29 @@ taux_acceptation <- function(lambda, omega, T, delta, beta, X ){
 }
 
 #TODO comment
-#lambda : parametre d'interet de l'algorithme metropolis
-#
-metropolis_core <-function(T, lambda, delta, sd_lambda, beta, X){
-  omega <- lambda + rnorm(1, 0, sd_lambda/2)
-  alpha <- taux_acceptation(lambda, omega, T, delta, beta, X)
+#param : parametre d'intéret
+metropolis_core <-function(T, lambda, delta, sd, beta, X, param){
+  omega <- 0
+  if(param == 1){
+    omega <- lambda + rnorm(1, 0, sd[1])
+  } 
+  else if(param == 2 || param == 3){
+    omega <- beta[param-1] + rnorm(1, 0, sd[param])
+  }
+
+  #omega <- lambda + rnorm(1, 0, sd_lambda/2)
+  alpha <- taux_acceptation(lambda, omega, T, delta, beta, X, param)
   U <-runif(1, 0, 1)
   if(U < alpha)
     return (omega)
-  else
-    return (lambda)
+  else{
+    if(param == 1){ 
+      return (lambda)
+    }
+    else if(param == 2 || param == 3){
+      return (beta[param-1])
+    }
+  }
 }
 
 #TODO comment
@@ -231,21 +253,23 @@ metropolis <- function(N, T, delta, X, sd_vect=c(0.2, 0.19, 0.27), M=10000, lamb
   vect_beta1 <- c(beta1)
   vect_beta2 <- c(beta2)
 
-  for(i in 1:M){
-    lambda <- metropolis_core(T, lambda, delta, sd_vect[1], c(beta1, beta2), X)
-    beta1 <- metropolis_core(T, lambda, delta, sd_vect[2], c(beta1, beta2), X)
-    beta2 <- metropolis_core(T, lambda, delta, sd_vect[3], c(beta1, beta2), X)
+
+  for(i in 1:(M-1)){
+    print(i)
+    lambda <- metropolis_core(T, lambda, delta, sd_vect, c(beta1, beta2), X, 1)
+    beta1 <- metropolis_core(T, lambda, delta, sd_vect, c(beta1, beta2), X, 2)
+    beta2 <- metropolis_core(T, lambda, delta, sd_vect, c(beta1, beta2), X, 3)
     vect_lambda <- append(vect_lambda, lambda)
     vect_beta1 <- append(vect_beta1, beta1)
     vect_beta2 <- append(vect_beta2, beta2)
   }
   accept_lambda <- taux_acceptation(lambda, lambda+rnorm(1, 0, sd_vect[1]), T,
-           delta, c(beta1, beta2), X)
-  accept_beta1 <- taux_acceptation(beta1, beta1+rnorm(1, 0, sd_vect[2]), T,
-           delta, c(beta1, beta2), X)
-  accept_beta2 <- taux_acceptation(beta2, beta2+rnorm(1, 0, sd_vect[3]), T,
-           delta, c(beta1, beta2), X)
-  return (c(vect_lambda, accept_lambda,vect_beta1, accept_beta1, vect_beta2, accept_beta2))
+           delta, c(beta1, beta2), X, 1)
+  accept_beta1 <- taux_acceptation(lambda, beta1+rnorm(1, 0, sd_vect[2]), T,
+           delta, c(beta1, beta2), X, 2)
+  accept_beta2 <- taux_acceptation(lambda, beta2+rnorm(1, 0, sd_vect[3]), T,
+           delta, c(beta1, beta2), X, 3)
+  return (c(vect_lambda, accept_lambda, vect_beta1, accept_beta1, vect_beta2, accept_beta2))
 }
 
 
@@ -264,10 +288,10 @@ compute_stats(s)
 lambda <- read.table("../resources/lambda_Flandre.txt")
 beta1 <- read.table("../resources/beta1_Flandre.txt")
 beta2 <- read.table("../resources/beta2_Flandre.txt")
-plot_graphs(lambda, beta1, beta2, "Flandre")
+plot_graphs(lambda[,2], beta1[,2], beta2[,2], "Flandre")
 
 #Part B.2
-plot_function(lambda, beta1, beta2, "Flandre", s[3][[1]])
+plot_function(lambda[,2], beta1[,2], beta2[,2], "Flandre", s[3][[1]])
 
 #Part C
 
@@ -275,9 +299,19 @@ plot_function(lambda, beta1, beta2, "Flandre", s[3][[1]])
 #d[d$TRT %in% c(0,1)]
 #d <- s[1][[1]]
 d <- na.omit(s[1][[1]])
-print(d)
+# print(d)
 stAge <- standardization(d$AGE)
 trt <- d$TRT
 m <- matrix(append(stAge, trt), ncol=2)
 t <- as.vector(gsub("[,]", ".", d$T), mode="numeric")
-bra <- metropolis(3, t, d$CENS, m)
+bra <- metropolis(3, t, d$CENS, m, M=100)
+print(bra)
+lam <- bra[1:100]
+print(lam)
+bet1 <- bra[102:201]
+print(bet1)
+bet2 <- bra[203:302]
+print(bet2)
+
+plot_graphs(lam, bet1, bet2, "Brabant")
+plot_function(lam, bet1, bet2, "Brabant", d)
