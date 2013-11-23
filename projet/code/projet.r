@@ -5,6 +5,10 @@
 #
 
 
+##########
+# PART A #
+##########
+
 #TODO comment
 compute_cens <- function(vector, file_to_save){
   f <- table(vector)
@@ -97,6 +101,12 @@ standardization <- function(data){
   return (na.omit((AGE - mean_AGE)/sd_AGE))
 }
 
+
+
+##########
+# PART B #
+##########
+
 #TODO comment
 plot_graphs <- function(lambda, beta1, beta2, zone){
   jpeg(paste(zone, "postérieur.jpeg", sep="_"), width = 640, height = 640, units = "px", quality = 90)
@@ -145,6 +155,12 @@ plot_function <- function(lambda, beta1, beta2, zone, data){
   op <- dev.off()
 }
 
+
+
+##########
+# PART C #
+##########
+
 #TODO comment
 #arg:
 # - T : the vector of observed times 
@@ -155,7 +171,7 @@ plot_function <- function(lambda, beta1, beta2, zone, data){
 #       and the treatement in the second one. (nrow = length(T))
 #returns : the logarithm of the distribution
 post_dist_log <- function(T, delta, l, beta, X){
-  stopifnot(length(T)==length(delta), length(T)==legnth(X[,1]))
+  stopifnot(length(T)==length(delta), length(T)==length(X[,1]))
   acc <- 0
   mX <- median(X[,1])
   for(i in 1:length(T)){
@@ -165,6 +181,71 @@ post_dist_log <- function(T, delta, l, beta, X){
   }
   return (acc+log(l))
 }
+
+#TODO comment
+taux_acceptation <- function(lambda, omega, T, delta, beta, X ){
+  pi_omega <- post_dist_log(T, delta, omega, beta, X)
+  pi_lambda <- post_dist_log(T, delta, lambda, beta, X)
+  v <- exp(pi_omega - pi_lambda)
+  if (v < 1)
+    return (v)
+  else
+    return (1)
+  
+}
+
+#TODO comment
+#lambda : parametre d'interet de l'algorithme metropolis
+#
+metropolis_core <-function(T, lambda, delta, sd_lambda, beta, X){
+  omega <- lambda + rnorm(1, 0, sd_lambda)
+  alpha <- taux_acceptation(lambda, omega, T, delta, beta, X)
+  U <-runif(1, 0, 1)
+  if(U < alpha)
+    return (omega)
+  else
+    return (lambda)
+}
+
+#TODO comment
+# M: Nombre d'iterations 
+# N: Nombre de paramètres
+# T: Le vecteur de temps observés
+# delta : indicateurs de censure
+# lambda_init : valeur initiale de lambda
+# beta_init : les valeurs initiales de (beta1, beta2)
+# X : une matrice dont la premiere colonne corespond a l'age standardise du
+# patient et dont la deuxieme colonne correspond au traitement recu
+# sd_vect : vecteur d'ecart type
+##
+metropolis <- function(N, T, delta, X, sd_vect=c(0.2, 0.19, 0.27), M=10000, lambda_init=1, beta_init=c(0.4, -0.4)){
+  lambda <- lambda_init
+  beta1 <- beta_init[1]
+  beta2 <- beta_init[2]
+
+  new_lambda <- c(lambda)
+  new_beta1 <- c(beta1)
+  new_beta2 <- c(beta2)
+
+  for(i in 1:M){
+    lambda <- metropolis_core(T, lambda, delta, sd_vect[1], c(beta1, beta2), X)
+    beta1 <- metropolis_core(T, beta1, delta, sd_vect[2], c(beta1, beta2), X)
+    beta2 <- metropolis_core(T, beta2, delta, sd_vect[3], c(beta1, beta2), X)
+    new_lambda <- append(new_lambda, lambda)
+    new_beta1 <- append(new_beta1, beta1)
+    new_beta2 <- append(new_beta2, beta2)
+  }
+  accept_lambda <- taux_acceptation(lambda, lambda+rnorm(1, 0, sd_vect[1]), T,
+           delta, c(beta1, beta2), X)
+  accept_beta1 <- taux_acceptation(beta1, beta1+rnorm(1, 0, sd_vect[2]), T,
+           delta, c(beta1, beta2), X)
+  accept_beta2 <- taux_acceptation(beta2, beta2+rnorm(1, 0, sd_vect[3]), T,
+           delta, c(beta1, beta2), X)
+  return (c(new_lambda, accept_lambda, new_beta1, accept_beta1, new_beta2, accept_beta2))
+}
+
+
+
 
 ########
 # Main #
@@ -184,64 +265,11 @@ plot_graphs(lambda, beta1, beta2, "Flandre")
 #Part B.2
 plot_function(lambda, beta1, beta2, "Flandre", s[3][[1]])
 
+#Part C
 
-#Part C.2
-##
-taux_acceptation <- function(lambda, omega, T, delta, beta, X ){
-  pi_omega <- post_dist_log(T, delta, omega, beta, X)
-  pi_lambda <- post_dist_log(T, delta, lambda, beta, X)
-  v = exp(pi_omega - pi_lambda)
-  if (v < 1)
-    return v
-  else
-    return 1
-}
-
-#lambda : parametre d'interet de l'algorithme metropolis
-#
-metropolis_core <-function(T, lambda, delta, sd_lambda, beta, X){
-  omega <- lambda + rnorm(1, 0, sd_lambda)
-  alpha <- taux_acceptation(lambda, omega, T, delta, beta, X)
-  U <-runif(1, 0, 1)
-  if(U < alpha)
-    return omega
-  else
-    return lambda
-}
-
-##
-# M: Nombre d'iterations 
-# N: Nombre de paramètres
-# T: Le vecteur de temps observé
-# delta : indicateurs de censure
-# lambda_init : valeur initiale de lambda
-# beta_init : les valeurs initiales de (beta1, beta2)
-# X : une matrice dont la premiere colonne corespond a l'age standardise du
-# patient et dont la deuxieme colonne correspond au traitement recu
-# sd_vect : vecteur d'ecart type
-##
-metropolis <- function(N, T, delta, X, sd_vect, M=10000, lambda_init=1, beta_init=c(0.4, -0.4)){
-  lambda <- lambda_init
-  beta1 <- beta_init[1]
-  beta2 <- beta_init[2]
-
-  new_lambda <- c(lambda)
-  new_beta1 <- c(beta1)
-  new_beta2 <- c(beta2)
-
-  for(i in 1:M){
-    lambda <- metropolis_core(T, lambda, delta, sd_vect[1], c(beta1, beta2), X)
-    beta1 <- metropolis_core(T, beta1, delta, sd_vect[2], c(beta1, beta2), X)
-    beta2 <- metropolis_core(T, beta2, delta, sd_vect[3], c(beta1, beta2), X)
-    new_lambda <- append(new_lambda, lambda)
-    new_beta1 <- append(new_beta1, beta1)
-    new_beta2 <- append(new_beta2, beta2)
-  }
-  accept_lambda <- taux_acceptation(lambda, lambda+rnorm(1, 0, sd_vect[1]), T,
-		 		   delta, c(beta1, beta2), X)
-  accept_beta1 <- taux_acceptation(beta1, beta1+rnorm(1, 0, sd_vect[2]), T,
-				   delta, c(beta1, beta2), X)
-  accept_beta2 <- taux_acceptation(beta2, beta2+rnorm(1, 0, sd_vect[3]), T,
-				   delta, c(beta1, beta2), X)
-  return c(new_lambda, accept_lambda, new_beta1, accept_beta1, new_beta2, accept_beta2)
-}
+d <- s[1][[1]]
+print(d)
+stAge <- standardization(d$AGE)
+print(stAge)
+print(d$TRT)
+#bra <- metropolis(3, d$T, d$CENS, )
