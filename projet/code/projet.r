@@ -126,17 +126,12 @@ plot_graphs <- function(lambda, beta1, beta2, zone){
 
 #TODO comment
 cox_S <- function(l, t, x, beta){
-  #print(t)
   return (exp(-l*t)^exp(x%*%beta))
 }
 
 #TODO comment
 cox_h <- function(l, x, beta){
-  
-  #print("cosh")
-  #print(l)
   r <- l*exp(x%*%beta)
-  #print(r[1][1])
   return (r[1][1])
 }
 
@@ -184,7 +179,6 @@ post_dist_log <- function(T, delta, l, beta, X){
     x <- c(mX, X[i,2])
     s <- log(cox_S(l, T[i], x, beta))
     h <- log(cox_h(l, x, beta))
-    #print(h)
     iter <- delta[i]*h + s
     acc <- acc + iter
   }
@@ -208,7 +202,6 @@ taux_acceptation <- function(lambda, omega, T, delta, beta, X ){
 #
 metropolis_core <-function(T, lambda, delta, sd_lambda, beta, X){
   omega <- lambda + rnorm(1, 0, sd_lambda/2)
-  print(omega)
   alpha <- taux_acceptation(lambda, omega, T, delta, beta, X)
   U <-runif(1, 0, 1)
   if(U < alpha)
