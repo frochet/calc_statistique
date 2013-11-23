@@ -212,6 +212,10 @@ metropolis_core <-function(T, lambda, delta, sd, beta, X, param){
   omega <- 0
   if(param == 1){
     omega <- lambda + rnorm(1, 0, sd[1])
+    #Guard to avoid lambda going below 0
+    if(omega < 0){
+      omega <- 0
+    }
   } 
   else if(param == 2 || param == 3){
     omega <- beta[param-1] + rnorm(1, 0, sd[param])
@@ -254,7 +258,7 @@ metropolis <- function(N, T, delta, X, sd_vect=c(0.2, 0.19, 0.27), M=10000, lamb
   vect_beta2 <- c(beta2)
 
   for(i in 1:(M-1)){
-    print(i)
+    #print(i)
     lambda <- metropolis_core(T, lambda, delta, sd_vect, c(beta1, beta2), X, 1)
     beta1 <- metropolis_core(T, lambda, delta, sd_vect, c(beta1, beta2), X, 2)
     beta2 <- metropolis_core(T, lambda, delta, sd_vect, c(beta1, beta2), X, 3)
