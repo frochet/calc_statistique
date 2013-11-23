@@ -253,7 +253,6 @@ metropolis <- function(N, T, delta, X, sd_vect=c(0.2, 0.19, 0.27), M=10000, lamb
   vect_beta1 <- c(beta1)
   vect_beta2 <- c(beta2)
 
-
   for(i in 1:(M-1)){
     print(i)
     lambda <- metropolis_core(T, lambda, delta, sd_vect, c(beta1, beta2), X, 1)
@@ -273,7 +272,22 @@ metropolis <- function(N, T, delta, X, sd_vect=c(0.2, 0.19, 0.27), M=10000, lamb
 }
 
 
+compute_metro <- function(d, n, iterations=10000){
+  offset <- 1
+  stAge <- standardization(d$AGE)
+  trt <- d$TRT
+  m <- matrix(append(stAge, trt), ncol=2)
+  t <- as.vector(gsub("[,]", ".", d$T), mode="numeric")
+  metro <- metropolis(3, t, d$CENS, m, M=iterations)
+  l <- metro[offset:(offset+iterations-1)]
+  offset <- offset+iterations+1
+  b1 <- metro[offset:(offset+iterations-1)]
+  offset <- offset+iterations+1
+  b2 <- metro[offset:(offset+iterations-1)]
 
+  plot_graphs(l, b1, b2, n)
+  plot_function(l, b1, b2, n, d)
+}
 
 ########
 # Main #
@@ -295,23 +309,28 @@ plot_function(lambda[,2], beta1[,2], beta2[,2], "Flandre", s[3][[1]])
 
 #Part C
 
+#Would have done otherwize by iterating on s, but I get an out of bound error when
+#   accessing the element s[i][[1]], don't know why
+d <- na.omit(s[1][[1]])
+n <- gsub(" ", "_", names(s[1]))
+compute_metro(d, n, iterations=10000)
+
+d <- na.omit(s[2][[1]])
+n <- gsub(" ", "_", names(s[2]))
+compute_metro(d, n, iterations=10000)
 
 #d[d$TRT %in% c(0,1)]
 #d <- s[1][[1]]
-d <- na.omit(s[1][[1]])
-# print(d)
-stAge <- standardization(d$AGE)
-trt <- d$TRT
-m <- matrix(append(stAge, trt), ncol=2)
-t <- as.vector(gsub("[,]", ".", d$T), mode="numeric")
-bra <- metropolis(3, t, d$CENS, m, M=100)
-print(bra)
-lam <- bra[1:100]
-print(lam)
-bet1 <- bra[102:201]
-print(bet1)
-bet2 <- bra[203:302]
-print(bet2)
+# d <- na.omit(s[1][[1]])
+# stAge <- standardization(d$AGE)
+# trt <- d$TRT
+# m <- matrix(append(stAge, trt), ncol=2)
+# t <- as.vector(gsub("[,]", ".", d$T), mode="numeric")
+# metro <- metropolis(3, t, d$CENS, m, M=100)
+# lam <- metro[1:100]
+# bet1 <- metro[102:201]
+# bet2 <- metro[203:302]
 
-plot_graphs(lam, bet1, bet2, "Brabant")
-plot_function(lam, bet1, bet2, "Brabant", d)
+
+# plot_graphs(lam, bet1, bet2, "Brabant")
+# plot_function(lam, bet1, bet2, "Brabant", d)
