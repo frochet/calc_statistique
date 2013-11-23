@@ -227,8 +227,8 @@ metropolis <- function(N, T, delta, X, sd_vect, M=10000, lamda_init=1, beta_init
 
   for(i in 1:M){
       lamda <- metropolis_core(T, lamda, delta, sd_vect[1], c(beta1, beta2), X)
-      beta1 <- metropolis_core(T, lamda, delta, sd_vect[2], c(beta1, beta2), X)
-      beta2 <- metropolis_core(T, lamda, delta, sd_vect[3], c(beta1, beta2), X)
+      beta1 <- metropolis_core(T, beta1, delta, sd_vect[2], c(beta1, beta2), X)
+      beta2 <- metropolis_core(T, beta2, delta, sd_vect[3], c(beta1, beta2), X)
   }
   accept_lamda <- taux_acceptation(lamda, lamda+rnorm(1, 0, sd_vect[1]), T,
 		 		   delta, c(beta1, beta2), X)
