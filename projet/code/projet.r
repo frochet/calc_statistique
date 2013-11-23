@@ -220,7 +220,7 @@ metropolis_core <-function(T, lambda, delta, sd_lambda, beta, X){
 # patient et dont la deuxieme colonne correspond au traitement recu
 # sd_vect : vecteur d'ecart type
 ##
-metropolis <- function(N, T, delta, X, sd_vect, M=10000, lambda_init=1, beta_init=c(0.4, -0.4)){
+metropolis <- function(T, delta, X, sd_vect, M=10000, lambda_init=1, beta_init=c(0.4, -0.4)){
   lambda <- lambda_init
   beta1 <- beta_init[1]
   beta2 <- beta_init[2]
@@ -245,3 +245,5 @@ metropolis <- function(N, T, delta, X, sd_vect, M=10000, lambda_init=1, beta_ini
 				   delta, c(beta1, beta2), X)
   return c(vect_lambda, accept_lambda,vect_beta1, accept_beta1, vect_beta2, accept_beta2)
 }
+
+
