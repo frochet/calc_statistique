@@ -165,8 +165,7 @@ plot_function <- function(lambda, beta1, beta2, zone, data){
 # C.1
 #TODO comment
 cox_h <- function(l, x, beta){
-  r <- l*exp(x%*%beta)
-  return (r[1][1])
+  return (l*exp(x%*%beta))
 }
 
 # C.1
@@ -181,18 +180,8 @@ cox_h <- function(l, x, beta){
 #returns : the logarithm of the distribution
 post_dist_log <- function(T, delta, l, beta, X){
   stopifnot(length(T)==length(delta), length(T)==length(X[,1]))
-  acc <- 0
-  mX <- median(X[,1])
-  #for(i in 1:length(T)){
-   # x <- c(mX, X[i,2])
-    #s <- log(cox_S(l, T[i], x, beta))
-    #h <- log(cox_h(l, x, beta))
-    #iter <- delta[i]*h + s
-    #acc <- acc + iter
-  #}
-  result <- delta*log(cox_h(l, x, beta)) + log(cox_S(l, T[i], x, beta))
+  result <- delta*log(cox_h(l, X, beta)) + log(cox_S(l, T, X, beta))
   return (sum(result)-log(l))
-  #return (acc+log(l))
 }
 
 # C.2
@@ -357,8 +346,8 @@ plot_function(lambda[,2], beta1[,2], beta2[,2], "Flandre", s[3][[1]])
 #   accessing the element s[i][[1]], don't know why
 d <- na.omit(s[1][[1]])
 n <- gsub(" ", "_", names(s[1]))
-compute_metro(d, n, iterations=100)
+compute_metro(d, n, iterations=5000)
 
 d <- na.omit(s[2][[1]])
 n <- gsub(" ", "_", names(s[2]))
-compute_metro(d, n, iterations=100)
+compute_metro(d, n, iterations=5000)
