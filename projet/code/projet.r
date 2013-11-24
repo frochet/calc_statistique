@@ -346,8 +346,8 @@ plot_function(lambda[,2], beta1[,2], beta2[,2], "Flandre", s[3][[1]])
 #   accessing the element s[i][[1]], don't know why
 d <- na.omit(s[1][[1]])
 n <- gsub(" ", "_", names(s[1]))
-compute_metro(d, n, iterations=1000)
+compute_metro(d, n, iterations=10000)
 
 d <- na.omit(s[2][[1]])
 n <- gsub(" ", "_", names(s[2]))
-compute_metro(d, n, iterations=1000)
+compute_metro(d, n, iterations=10000)
