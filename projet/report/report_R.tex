@@ -35,24 +35,26 @@
     \end{center}
 \end{titlepage}
 
-Le programme se trouve dans le fichier projet.r. Le fichier est séparé en 3 parties, qui regroupent les déclarations de fonctions utilisées pour chaque partie. A la fin du fichier, vous trouverez les appels de fonctions produisant les résultats attendus pour chaque partie.
+Le programme se trouve dans le fichier \texttt{projet.r}. Le fichier est séparé en 3 parties, qui regroupent les déclarations de fonctions utilisées pour chaque partie. A la fin du fichier, vous trouverez les appels de fonctions produisant les résultats attendus pour chaque partie (le changement de répertoire se trouve en fin de fichier).\\
+L'exécution prend une à quelques dizaines de secondes selon les confifurations.
 
 \section{Partie A}
-\subsection{Remarque}
-Concernant la première consigne du projet, c'est à dire "modifier le répertoire courant de votre session R afin que celui-ci corresponde au répertoire créé préalablement". Il est en fait plus simple, et surtout portable, d'exécuter un script R dans le répertoire où se trouve le fichier. Sinon vous êtes obligés de changer cette ligne quand vous l'exécuterai. Les étudiants ayant ajouté un setwd("path\_to\_file") ont été obligé de modifié cette ligne a chaque échange de fichier, ce qui peut être légèrement agaçant.\\
-Pour cette raison, nous n'utilisons pas setwd(). Nous avons néanmoins laissé un setwd en commentaire au début du fichier si vous préférez utiliser cette méthode.
-\subsection{Explication du code}
 
-La fonction principale générant les fichiers demandés se nomme $compute\_stats$. Pour chaque province dans le fichier de données, cette fonction crée un fichier .txt du nom de la province et print les résultats des fonctions $compute\_cens$, $compute\_trt$ et $stat\_descr$ dans celui-ci. \\
-Le 5 ème point de cette partie se trouve dans la fonction $standardization$
+\subsection{Remarque}
+Concernant le point A.1 ``Modifier le répertoire courant de votre session R afin que celui-ci corresponde au répertoire créé préalablement''. La ligne de code concernée est commentée car nous travaillons en console et donc lançons le script depuis le bon répertoire.\\
+Pour lancer le script, il faut donc décommenter \texttt{stwd("répertoire du script")} et mettre le bon chemin pour le répertoire dans lequel le script se trouve. L'autre solution de lancer le script en console à partir du bon répertoire évite d'avoir à changer le chemin.
+
+\subsection{Explication du code}
+La fonction principale générant les fichiers demandés se nomme \texttt{compute\_stats()}. Pour chaque province dans le fichier de données, la fonction crée un fichier \texttt{.txt} du nom de la province et y écrit les résultats des fonctions \texttt{compute\_cens()}, \texttt{compute\_trt()} et \texttt{stat\_descr()} dans celui-ci. \\
+Le 5ième objectif de la partie A est réalisé à l'aide de la fonction \texttt{standardization()} qui sera appelée dans la suite du code quand l'opération sera demandée.
 
 \section{Partie B}
+Les deux fonctions appelées sont \texttt{plot\_graphs()} et \texttt{plot\_function()}. Elles se chargent repectivement des questions 1 et 2.\\
 Voici les résultats produits. Vous pouvez obtenir ces figures en executant le script.
-
 
 \begin{figure}[!h]
    \begin{minipage}[c]{.46\linewidth}
-	\includegraphics[scale=0.3]{../code/Flandre_posterieur.jpeg}
+	\includegraphics[scale=0.3]{../code/Flandre_posterieure.jpeg}
 	\caption{Partie B.1 - Flandre}
    \end{minipage} \hfill
    \begin{minipage}[c]{.46\linewidth}
@@ -62,6 +64,11 @@ Voici les résultats produits. Vous pouvez obtenir ces figures en executant le s
 \end{figure}
 
 \section{Partie C}
+La fonction \texttt{post\_dist\_log()} assure le calcul de la fonction $\pi$ de la question 1. Le fonction \texttt{metropolis()} constitue l'implémentation de l'algorithme de Metropolis avec \texttt{metropolis\_core()} qui se charge des étapes étant répétées sur les différents paramètres.\\
+La fonction \texttt{compute\_metro()} reprend le travail à faire sur un jeu de données afin de fournir les graphes demandés.\\
+
+Ces figures ont été générées par les mêmes fonctions que celle utilisées à la partie B, après que les vecteurs $\lambda$, $\beta_{1}$ et $\beta_{2}$ aient été calculés.
+
 \begin{figure}[!h]
    \begin{minipage}[c]{.46\linewidth}
 	\includegraphics[scale=0.3]{../code/Brabant_Wallon_posterieure.jpeg}

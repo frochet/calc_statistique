@@ -1,9 +1,3 @@
-#Pour les testeurs du programmes. Vous pouvez aussi executer R directement dans
-#repertoire où se trouve ce fichier, cela fonctionnera très bien.
-#setwd("")
-#
-#
-
 ##########
 # PART A #
 ##########
@@ -304,10 +298,12 @@ compute_metro <- function(d, n, iterations=10000){
 
 # A.1
 # TODO: set one before submission
-# stwd("")
+# Pour les testeurs du programmes. Vous pouvez aussi executer R directement dans
+# repertoire où se trouve ce fichier, cela fonctionnera très bien.
+# stwd("répertoire du script")
 
 # A.2
-data <- read.table("../resources/ProjetR.txt", header=TRUE, sep="*", skip=1)
+data <- read.table("resources/ProjetR.txt", header=TRUE, sep="*", skip=1)
 
 # A.3
 s <- split(data, data$PROV)
@@ -323,9 +319,9 @@ compute_stats(s)
 #--------
 
 #Part B.1
-lambda <- read.table("../resources/lambda_Flandre.txt")
-beta1 <- read.table("../resources/beta1_Flandre.txt")
-beta2 <- read.table("../resources/beta2_Flandre.txt")
+lambda <- read.table("resources/lambda_Flandre.txt")
+beta1 <- read.table("resources/beta1_Flandre.txt")
+beta2 <- read.table("resources/beta2_Flandre.txt")
 plot_graphs(lambda[,2], beta1[,2], beta2[,2], "Flandre")
 
 #Part B.2
