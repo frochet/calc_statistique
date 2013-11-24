@@ -1,6 +1,6 @@
-#USELESS CHANGE TO PATH
-#TODO: set one before submission
-#stwd("")
+#Pour les testeurs du programmes. Vous pouvez aussi executer R directement dans
+#repertoire où se trouve ce fichier, cela fonctionnera très bien.
+#setwd("")
 #
 #
 
@@ -24,7 +24,7 @@ compute_cens <- function(vector, file_to_save){
 }
 
 #TODO comment
-compute_treat <- function(vector, file_to_save){
+compute_trt <- function(vector, file_to_save){
   f <- table(vector)
   n <- sum(is.na(vector))
   l <- length(vector)
@@ -73,7 +73,8 @@ compute_stats <- function(s){
     file.create(filename)
 
     #Part 1
-    cat("Statistiques descriptives pour le province  Brabant Wallon  : \n", file=filename, append=TRUE)
+    title = paste("Statistiques descriptives pour la province" , n, ": \n")
+    cat(title, file=filename, append=TRUE)
     cat("_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _  \n\n", file=filename, append=TRUE)
     cat("Nombre de patient ayant subi l'événement versus les patients censurés : \n\n", file=filename, append=TRUE)
     #compute censure freq
@@ -81,7 +82,7 @@ compute_stats <- function(s){
 
     cat("\nNombre de patient ayant reçu le traitement A vs les patients ayant reçu le traitement B : \n\n", file=filename, append=TRUE)
     #compute treatment freq
-    compute_treat(p[[1]]$TRT, filename)
+    compute_trt(p[[1]]$TRT, filename)
 
     cat("\nStatistiques descriptives pour les concernant les temps de rechute\nainsi que l'âge des patients ayant subi une rechute :\n\n", file=filename, append=TRUE)
     #compute desc stats

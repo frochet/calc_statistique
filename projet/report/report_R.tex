@@ -1,0 +1,78 @@
+\documentclass{article}
+
+\input{header.tex}
+\newcommand{\phasor}[2] {
+  #1\phase{#2\degree}
+}
+
+\begin{document}
+
+\begin{titlepage}
+    \begin{center}
+        {\huge LSTAT2020: Calcul statistique sur ordinateur}\\
+        \vspace{0.4cm}
+        
+        {\Large {Professeur : Celine Bugli}}\\
+        \vspace{0.6cm}
+        
+        {\Large \textit{Projet R}}\\
+        \vspace{1.2cm}
+
+        \texttt{}\\
+        \vspace{0.2cm}
+
+        \includegraphics[height=10cm]{pageGarde.png}\\
+        \vspace{0.1cm}
+        {\Large \textbf{Universit\'e Catholique de Louvain}}
+        \vspace{0.7cm}
+
+        \vspace{2cm}
+        
+        Florentin Rochet\\
+        Léonard Debroux \\
+        \vspace{0.2cm}
+        2013-2014\\
+    \end{center}
+\end{titlepage}
+
+Le programme se trouve dans le fichier projet.r. Le fichier est séparé en 3 parties, qui regroupent les déclarations de fonctions utilisées pour chaque partie. A la fin du fichier, vous trouverez les appels de fonctions produisant les résultats attendus pour chaque partie.
+
+\section{Partie A}
+\subsection{Remarque}
+Concernant la première consigne du projet, c'est à dire "modifier le répertoire courant de votre session R afin que celui-ci corresponde au répertoire créé préalablement". Il est en fait plus simple, et surtout portable, d'exécuter un script R dans le répertoire où se trouve le fichier. Sinon vous êtes obligés de changer cette ligne quand vous l'exécuterai. Les étudiants ayant ajouté un setwd("path\_to\_file") ont été obligé de modifié cette ligne a chaque échange de fichier, ce qui peut être légèrement agaçant.\\
+Pour cette raison, nous n'utilisons pas setwd(). Nous avons néanmoins laissé un setwd en commentaire au début du fichier si vous préférez utiliser cette méthode.
+\subsection{Explication du code}
+
+La fonction principale générant les fichiers demandés se nomme $compute\_stats$. Pour chaque province dans le fichier de données, cette fonction crée un fichier .txt du nom de la province et print les résultats des fonctions $compute\_cens$, $compute\_trt$ et $stat\_descr$ dans celui-ci. \\
+Le 5 ème point de cette partie se trouve dans la fonction $standardization$
+
+\section{Partie B}
+Voici les résultats produits. Vous pouvez obtenir ces figures en executant le script.
+
+\begin{figure}[!h]
+   \begin{minipage}[c]{.46\linewidth}
+	\includegraphics[scale=0.3]{../code/Brabant_posterieur.jpeg}
+	\caption{Partie B.1 - Brabant-Wallon}
+   \end{minipage} \hfill
+   \begin{minipage}[c]{.46\linewidth}
+	\includegraphics[scale=0.3]{../code/Flandre_posterieur.jpeg}
+	\caption{Partie B.1 - Flandre}
+   \end{minipage}
+\end{figure}
+
+\begin{figure}[!h]
+   \begin{minipage}[c]{.46\linewidth}
+	\includegraphics[scale=0.3]{../code/Brabant_survie.jpeg}
+	\caption{Partie B.2 - Brabant-Wallon}
+   \end{minipage} \hfill
+   \begin{minipage}[c]{.46\linewidth}
+	\includegraphics[scale=0.3]{../code/Flandre_survie.jpeg}
+	\caption{Partie B.2 - Flandre}
+   \end{minipage}
+\end{figure}
+
+\section{Partie C}
+
+
+\end{document}
+
