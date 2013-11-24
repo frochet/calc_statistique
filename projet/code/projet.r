@@ -4,11 +4,11 @@
 #
 #
 
-
 ##########
 # PART A #
 ##########
 
+# A.4
 #TODO comment
 compute_cens <- function(vector, file_to_save){
   f <- table(vector)
@@ -23,6 +23,7 @@ compute_cens <- function(vector, file_to_save){
   sink()
 }
 
+# A.4
 #TODO comment
 compute_trt <- function(vector, file_to_save){
   f <- table(vector)
@@ -38,7 +39,7 @@ compute_trt <- function(vector, file_to_save){
   sink()
 }
 
-#
+# A.4
 # data is a clean matrix where all of the elements are meaningful
 # for the statistical measurement
 # for this case it will be data[data["CENS"] == 1,] 
@@ -63,7 +64,8 @@ stat_descr <- function(data, file_to_save){
   #write.table(data_to_write, file_to_save, append=TRUE) #does shitty print
 }
 
-#TODO comment
+# A.4
+# TODO comment
 compute_stats <- function(s){
   for(i in 1:length(s)){
     p <- s[i]
@@ -90,8 +92,8 @@ compute_stats <- function(s){
   }
 }
 
-#
-# Fifth point of the Part A. Standardize a column. 
+# A.5
+# Standardize a column. 
 # To use the function to standardize age, you have to give data$AGE to 
 # the parameter data of the function.
 #
@@ -108,6 +110,7 @@ standardization <- function(data){
 # PART B #
 ##########
 
+# B.1, C.3
 #TODO comment
 plot_graphs <- function(lambda, beta1, beta2, zone){
   jpeg(paste(zone, "postérieur.jpeg", sep="_"), width = 640, height = 640, units = "px", quality = 90)
@@ -125,17 +128,13 @@ plot_graphs <- function(lambda, beta1, beta2, zone){
   op <- dev.off()
 }
 
+# B.2, C.1
 #TODO comment
 cox_S <- function(l, t, x, beta){
   return (exp(-l*t)^exp(x%*%beta))
 }
 
-#TODO comment
-cox_h <- function(l, x, beta){
-  r <- l*exp(x%*%beta)
-  return (r[1][1])
-}
-
+# B.2, C.3
 #TODO comment
 plot_function <- function(lambda, beta1, beta2, zone, data){
   jpeg(paste(zone, "survie.jpeg", sep="_"), width = 640, height = 640, units = "px", quality = 90)
@@ -163,6 +162,14 @@ plot_function <- function(lambda, beta1, beta2, zone, data){
 # PART C #
 ##########
 
+# C.1
+#TODO comment
+cox_h <- function(l, x, beta){
+  r <- l*exp(x%*%beta)
+  return (r[1][1])
+}
+
+# C.1
 #TODO comment
 #arg:
 # - T : the vector of observed times 
@@ -186,6 +193,7 @@ post_dist_log <- function(T, delta, l, beta, X){
   return (acc+log(l))
 }
 
+# C.2
 #TODO comment
 taux_acceptation <- function(lambda, omega, T, delta, beta, X, param){
   if(param == 1){
@@ -207,6 +215,7 @@ taux_acceptation <- function(lambda, omega, T, delta, beta, X, param){
   
 }
 
+# C.2
 #TODO comment
 #param : parametre d'intéret
 metropolis_core <-function(T, lambda, delta, sd, beta, X, param){
@@ -214,8 +223,8 @@ metropolis_core <-function(T, lambda, delta, sd, beta, X, param){
   if(param == 1){
     omega <- lambda + rnorm(1, 0, sd[1])
     #Guard to avoid lambda going below 0
-    if(omega < 0){
-      omega <- 0
+    if(omega <= 0){
+      omega <- 0.000001
     }
   } 
   else if(param == 2 || param == 3){
@@ -237,6 +246,7 @@ metropolis_core <-function(T, lambda, delta, sd, beta, X, param){
   }
 }
 
+# C.2
 #TODO comment
 # M: Nombre d'iterations 
 # N: Nombre de paramètres
@@ -248,7 +258,6 @@ metropolis_core <-function(T, lambda, delta, sd, beta, X, param){
 # patient et dont la deuxieme colonne correspond au traitement recu
 # sd_vect : vecteur d'ecart type
 ##
-
 metropolis <- function(N, T, delta, X, sd_vect=c(0.2, 0.19, 0.27), M=10000, lambda_init=1, beta_init=c(0.4, -0.4)){
   lambda <- lambda_init
   beta1 <- beta_init[1]
@@ -276,7 +285,7 @@ metropolis <- function(N, T, delta, X, sd_vect=c(0.2, 0.19, 0.27), M=10000, lamb
   return (c(vect_lambda, accept_lambda, vect_beta1, accept_beta1, vect_beta2, accept_beta2))
 }
 
-
+# C.3
 compute_metro <- function(d, n, iterations=10000){
   offset <- 1
   stAge <- standardization(d$AGE)
@@ -298,10 +307,29 @@ compute_metro <- function(d, n, iterations=10000){
 # Main #
 ########
 
-#Part A
+
+# Part A
+#--------
+
+# A.1
+# TODO: set one before submission
+# stwd("")
+
+# A.2
 data <- read.table("../resources/ProjetR.txt", header=TRUE, sep="*", skip=1)
+
+# A.3
 s <- split(data, data$PROV)
+
+# A.4
 compute_stats(s)
+
+# A.5
+# fait par la fonction standardization()
+
+
+# Part B
+#--------
 
 #Part B.1
 lambda <- read.table("../resources/lambda_Flandre.txt")
@@ -312,9 +340,18 @@ plot_graphs(lambda[,2], beta1[,2], beta2[,2], "Flandre")
 #Part B.2
 plot_function(lambda[,2], beta1[,2], beta2[,2], "Flandre", s[3][[1]])
 
-#Part C
 
-#Would have done otherwize by iterating on s, but I get an out of bound error when
+# Part C
+#--------
+
+# C.1
+# Cfr fonction post_dist_log()
+
+# C.2
+# Cfr fonction metropolis()
+
+# C.3
+# Would have done otherwize by iterating on s[i], but I get an out of bound error when
 #   accessing the element s[i][[1]], don't know why
 d <- na.omit(s[1][[1]])
 n <- gsub(" ", "_", names(s[1]))
@@ -323,19 +360,3 @@ compute_metro(d, n, iterations=10000)
 d <- na.omit(s[2][[1]])
 n <- gsub(" ", "_", names(s[2]))
 compute_metro(d, n, iterations=10000)
-
-#d[d$TRT %in% c(0,1)]
-#d <- s[1][[1]]
-# d <- na.omit(s[1][[1]])
-# stAge <- standardization(d$AGE)
-# trt <- d$TRT
-# m <- matrix(append(stAge, trt), ncol=2)
-# t <- as.vector(gsub("[,]", ".", d$T), mode="numeric")
-# metro <- metropolis(3, t, d$CENS, m, M=100)
-# lam <- metro[1:100]
-# bet1 <- metro[102:201]
-# bet2 <- metro[203:302]
-
-
-# plot_graphs(lam, bet1, bet2, "Brabant")
-# plot_function(lam, bet1, bet2, "Brabant", d)
