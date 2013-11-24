@@ -1,5 +1,6 @@
 #Pour les testeurs du programmes. Vous pouvez aussi executer R directement dans
-#repertoire où se trouve ce fichier, cela fonctionnera très bien.
+#repertoire ou se trouve ce fichier, cela fonctionnera tres bien et vous evite
+#de devoir utiliser setwd.
 #setwd("")
 #
 #
@@ -185,7 +186,8 @@ post_dist_log <- function(T, delta, l, beta, X){
 }
 
 # C.2
-#TODO comment
+# Calcul le taux d'acceptation alpha defini dans l'enonce.
+#
 taux_acceptation <- function(lambda, omega, T, delta, beta, X, param){
   if(param == 1){
     l <- omega
@@ -207,7 +209,8 @@ taux_acceptation <- function(lambda, omega, T, delta, beta, X, param){
 }
 
 # C.2
-#TODO comment
+# Coeur de l'algorithme Metropolis. Ce sont les 4 etapes precisee dans
+# l'enonce. A repeter sur chaque parametre d'interet.
 #param : parametre d'intéret
 metropolis_core <-function(T, lambda, delta, sd, beta, X, param){
   omega <- 0
@@ -238,7 +241,6 @@ metropolis_core <-function(T, lambda, delta, sd, beta, X, param){
 }
 
 # C.2
-#TODO comment
 # M: Nombre d'iterations 
 # N: Nombre de paramètres
 # T: Le vecteur de temps observés
