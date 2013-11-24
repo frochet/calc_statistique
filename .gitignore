@@ -1,0 +1,9 @@
+*.png
+*.jpeg
+*.pdf
+
+*.aux
+*.out
+*.log
+*.fdb_latexmk
+
