@@ -3,7 +3,7 @@
 ##########
 
 # A.4
-#TODO comment
+# Frequences sur la censure
 compute_cens <- function(vector, file_to_save){
   f <- table(vector)
 
@@ -18,7 +18,7 @@ compute_cens <- function(vector, file_to_save){
 }
 
 # A.4
-#TODO comment
+# Frequences sur les traitements
 compute_trt <- function(vector, file_to_save){
   f <- table(vector)
   n <- sum(is.na(vector))
@@ -34,12 +34,8 @@ compute_trt <- function(vector, file_to_save){
 }
 
 # A.4
-# data is a clean matrix where all of the elements are meaningful
-# for the statistical measurement
-# for this case it will be data[data["CENS"] == 1,] 
-#
+# Statistiques descriptives
 stat_descr <- function(data, file_to_save){
-  #todo : improve the function to hava generic col name  
   T = gsub("[,]",".", data$T)
   AGE = gsub("[,]",".", data$AGE)
   summary_T <- summary(as.vector(T, mode="numeric"), na.rm=TRUE)
@@ -55,11 +51,10 @@ stat_descr <- function(data, file_to_save){
   sink(file=file_to_save, append=TRUE)
   print(data_to_write, digits=4)
   sink()
-  #write.table(data_to_write, file_to_save, append=TRUE) #does shitty print
 }
 
 # A.4
-# TODO comment
+# Statistiques pour les jeux de donnees
 compute_stats <- function(s){
   for(i in 1:length(s)){
     p <- s[i]
@@ -87,10 +82,8 @@ compute_stats <- function(s){
 }
 
 # A.5
-# Standardize a column. 
-# To use the function to standardize age, you have to give data$AGE to 
-# the parameter data of the function.
-#
+# Standardise une colonne
+# Pour utiliser la fonction pour standardiser age, il faut donner data$AGE comme parametre
 standardization <- function(data){
   AGE <- as.vector(gsub("[,]", ".", data), mode="numeric")
   sd_AGE <- sd(AGE, na.rm=TRUE)
@@ -105,7 +98,7 @@ standardization <- function(data){
 ##########
 
 # B.1, C.3
-#TODO comment
+# Graphes de lambda, beta1 et beta2
 plot_graphs <- function(lambda, beta1, beta2, zone){
   jpeg(paste(zone, "posterieure.jpeg", sep="_"), width = 640, height = 640, units = "px", quality = 90)
   par(mfrow = c(2,3), oma=c(0,0,2,0))
@@ -123,13 +116,13 @@ plot_graphs <- function(lambda, beta1, beta2, zone){
 }
 
 # B.2, C.1
-#TODO comment
+# Fonction de survie du modele de Cox
 cox_S <- function(l, t, x, beta){
   return (exp(-l*t)^exp(x%*%beta))
 }
 
 # B.2, C.3
-#TODO comment
+# Fonction de survie pour les deux traitements
 plot_function <- function(lambda, beta1, beta2, zone, data){
   jpeg(paste(zone, "survie.jpeg", sep="_"), width = 640, height = 640, units = "px", quality = 90)
   t <- seq(from = 0, to = 7, by = 0.1)
@@ -157,21 +150,13 @@ plot_function <- function(lambda, beta1, beta2, zone, data){
 ##########
 
 # C.1
-#TODO comment
+# Fonction de hasard du modele de Cox
 cox_h <- function(l, x, beta){
   return (l*exp(x%*%beta))
 }
 
 # C.1
-#TODO comment
-#arg:
-# - T : the vector of observed times 
-# - delta : the vector of censor (same length as T)
-# - l : the median of the lambda vector
-# - beta : a vector (b1, b2) with bi = median(beta(i)
-# - X : a matrix with the standardized age if the patient in the first column 
-#       and the treatement in the second one. (nrow = length(T))
-#returns : the logarithm of the distribution
+# Calcule la valeur du logarithme de la distribution posterieure
 post_dist_log <- function(T, delta, l, beta, X){
   stopifnot(length(T)==length(delta), length(T)==length(X[,1]))
   result <- delta*log(cox_h(l, X, beta)) + log(cox_S(l, T, X, beta))
@@ -180,7 +165,6 @@ post_dist_log <- function(T, delta, l, beta, X){
 
 # C.2
 # Calcul le taux d'acceptation alpha defini dans l'enonce.
-#
 taux_acceptation <- function(lambda, omega, T, delta, beta, X, param){
   if(param == 1){
     l <- omega
@@ -204,7 +188,6 @@ taux_acceptation <- function(lambda, omega, T, delta, beta, X, param){
 # C.2
 # Coeur de l'algorithme Metropolis. Ce sont les 4 etapes precisee dans
 # l'enonce. A repeter sur chaque parametre d'interet.
-#param : parametre d'intéret
 metropolis_core <-function(T, lambda, delta, sd, beta, X, param){
   omega <- 0
   if(param == 1){
@@ -217,8 +200,6 @@ metropolis_core <-function(T, lambda, delta, sd, beta, X, param){
   else if(param == 2 || param == 3){
     omega <- beta[param-1] + rnorm(1, 0, sd[param])
   }
-
-  #omega <- lambda + rnorm(1, 0, sd_lambda/2)
   alpha <- taux_acceptation(lambda, omega, T, delta, beta, X, param)
   U <-runif(1, 0, 1)
   if(U < alpha)
@@ -234,6 +215,7 @@ metropolis_core <-function(T, lambda, delta, sd, beta, X, param){
 }
 
 # C.2
+# Implementation de l'algorithme de Metropolis
 # M: Nombre d'iterations 
 # N: Nombre de paramètres
 # T: Le vecteur de temps observés
@@ -243,7 +225,6 @@ metropolis_core <-function(T, lambda, delta, sd, beta, X, param){
 # X : une matrice dont la premiere colonne corespond a l'age standardise du
 # patient et dont la deuxieme colonne correspond au traitement recu
 # sd_vect : vecteur d'ecart type
-##
 metropolis <- function(N, T, delta, X, sd_vect=c(0.2, 0.19, 0.27), M=10000, lambda_init=1, beta_init=c(0.4, -0.4)){
   lambda <- lambda_init
   beta1 <- beta_init[1]
@@ -254,7 +235,6 @@ metropolis <- function(N, T, delta, X, sd_vect=c(0.2, 0.19, 0.27), M=10000, lamb
   vect_beta2 <- c(beta2)
 
   for(i in 1:(M-1)){
-    #print(i)
     lambda <- metropolis_core(T, lambda, delta, sd_vect, c(beta1, beta2), X, 1)
     beta1 <- metropolis_core(T, lambda, delta, sd_vect, c(beta1, beta2), X, 2)
     beta2 <- metropolis_core(T, lambda, delta, sd_vect, c(beta1, beta2), X, 3)
@@ -298,7 +278,6 @@ compute_metro <- function(d, n, iterations=10000){
 #--------
 
 # A.1
-# TODO: set one before submission
 # stwd à décommenter pour renseigner le répertoire du script
 # stwd("répertoire du script")
 
@@ -338,8 +317,9 @@ plot_function(lambda[,2], beta1[,2], beta2[,2], "Flandre", s[3][[1]])
 # Cfr fonction metropolis()
 
 # C.3
-# Would have done otherwize by iterating on s[i], but I get an out of bound error when
-#   accessing the element s[i][[1]], don't know why
+# Devrait être fait grace à une boucle pour eviter la duplication de code, 
+# mais s[i][[1]] renvoie alors une error 'out of bound'
+# Le resultat est malgré tout identique.
 d <- na.omit(s[1][[1]])
 n <- gsub(" ", "_", names(s[1]))
 compute_metro(d, n, iterations=10000)
