@@ -133,6 +133,7 @@ plot_function <- function(lambda, beta1, beta2, zone, data){
   mBeta1 <- median(beta1)
   mBeta2 <- median(beta2)
   beta <- c(mBeta1, mBeta2)
+  # ci dessous, stAge peut etre remplacé par stAge0 et stAge1 si on veut les valeurs d'age en fonciton du traitement
   x0 <- c(median(stAge), 0) #stAge0
   x1 <- c(median(stAge), 1) #stAge1
   S0 <- cox_S(lamb, t, x0, beta)
@@ -319,7 +320,7 @@ plot_function(lambda[,2], beta1[,2], beta2[,2], "Flandre", s[3][[1]])
 # C.3
 # Devrait être fait grace à une boucle pour eviter la duplication de code, 
 # mais s[i][[1]] renvoie alors une error 'out of bound'
-# Le resultat est malgré tout identique.
+# Le resultat est malgre tout identique.
 d <- na.omit(s[1][[1]])
 n <- gsub(" ", "_", names(s[1]))
 compute_metro(d, n, iterations=10000)
