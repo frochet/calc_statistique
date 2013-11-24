@@ -113,7 +113,7 @@ standardization <- function(data){
 # B.1, C.3
 #TODO comment
 plot_graphs <- function(lambda, beta1, beta2, zone){
-  jpeg(paste(zone, "postérieur.jpeg", sep="_"), width = 640, height = 640, units = "px", quality = 90)
+  jpeg(paste(zone, "posterieure.jpeg", sep="_"), width = 640, height = 640, units = "px", quality = 90)
   par(mfrow = c(2,3), oma=c(0,0,2,0))
   plot(lambda, type = "l", ylab = "lambda", xlab = "nb iteration")
   plot(beta1, type = "l", ylab = "AGE", xlab = "nb iteration")
@@ -346,8 +346,8 @@ plot_function(lambda[,2], beta1[,2], beta2[,2], "Flandre", s[3][[1]])
 #   accessing the element s[i][[1]], don't know why
 d <- na.omit(s[1][[1]])
 n <- gsub(" ", "_", names(s[1]))
-compute_metro(d, n, iterations=5000)
+compute_metro(d, n, iterations=1000)
 
 d <- na.omit(s[2][[1]])
 n <- gsub(" ", "_", names(s[2]))
-compute_metro(d, n, iterations=5000)
+compute_metro(d, n, iterations=1000)
