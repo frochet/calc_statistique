@@ -1,3 +1,9 @@
+###
+#Author : Rochet Florentin
+#         Debroux Leonard
+###
+# /!\ Un rapport concis est fourni avec l'archive, il vous aidera à corriger
+# plus rapidement ce travail /!\
 ##########
 # PART A #
 ##########
